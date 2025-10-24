@@ -8,6 +8,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -187,5 +188,56 @@ public class UCSBOrganizationTests extends ControllerTestCase {
     assertEquals("Inactive Org Short", returned.getOrgTranslationShort());
     assertEquals("Inactive Org Full Name", returned.getOrgTranslation());
     assertEquals(true, returned.getInactive());
+  }
+
+  @WithMockUser(roles = {"ADMIN", "USER"})
+  @Test
+  public void admin_can_delete_a_org() throws Exception {
+    // arrange
+
+    UCSBOrganization organization1 =
+        UCSBOrganization.builder()
+            .orgCode("TT")
+            .orgTranslationShort("Theta Tau")
+            .orgTranslation("Engineering Frat")
+            .inactive(false)
+            .build();
+
+    when(ucsbOrganizationRepository.findById(eq("TT"))).thenReturn(Optional.of(organization1));
+
+    // act
+    MvcResult response =
+        mockMvc
+            .perform(delete("/api/ucsborganization?orgCode=TT").with(csrf()))
+            .andExpect(status().isOk())
+            .andReturn();
+
+    // assert
+    verify(ucsbOrganizationRepository, times(1)).findById("TT");
+    verify(ucsbOrganizationRepository, times(1)).delete(any());
+
+    Map<String, Object> json = responseToJson(response);
+    assertEquals("UCSBOrganization with id TT deleted", json.get("message"));
+  }
+
+  @WithMockUser(roles = {"ADMIN", "USER"})
+  @Test
+  public void admin_tries_to_delete_non_existant_organization_and_gets_right_error_message()
+      throws Exception {
+    // arrange
+
+    when(ucsbOrganizationRepository.findById(eq("akpsi"))).thenReturn(Optional.empty());
+
+    // act
+    MvcResult response =
+        mockMvc
+            .perform(delete("/api/ucsborganization?orgCode=akpsi").with(csrf()))
+            .andExpect(status().isNotFound())
+            .andReturn();
+
+    // assert
+    verify(ucsbOrganizationRepository, times(1)).findById("akpsi");
+    Map<String, Object> json = responseToJson(response);
+    assertEquals("UCSBOrganization with id akpsi not found", json.get("message"));
   }
 }
