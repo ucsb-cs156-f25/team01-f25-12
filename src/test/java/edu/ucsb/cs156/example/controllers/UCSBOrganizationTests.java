@@ -11,6 +11,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import edu.ucsb.cs156.example.ControllerTestCase;
@@ -26,6 +27,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -232,6 +234,86 @@ public class UCSBOrganizationTests extends ControllerTestCase {
     MvcResult response =
         mockMvc
             .perform(delete("/api/ucsborganization?orgCode=akpsi").with(csrf()))
+            .andExpect(status().isNotFound())
+            .andReturn();
+
+    // assert
+    verify(ucsbOrganizationRepository, times(1)).findById("akpsi");
+    Map<String, Object> json = responseToJson(response);
+    assertEquals("UCSBOrganization with id akpsi not found", json.get("message"));
+  }
+
+  @WithMockUser(roles = {"ADMIN", "USER"})
+  @Test
+  public void admin_can_edit_an_existing_organization() throws Exception {
+    // arrange
+
+    UCSBOrganization organizationOg =
+        UCSBOrganization.builder()
+            .orgCode("TT")
+            .orgTranslationShort("Theta Tau")
+            .orgTranslation("Engineering Frat")
+            .inactive(false)
+            .build();
+
+    UCSBOrganization organizationEdited =
+        UCSBOrganization.builder()
+            .orgCode("T_T")
+            .orgTranslationShort("Theta_Tau")
+            .orgTranslation("Eng Frat")
+            .inactive(true)
+            .build();
+
+    String requestBody = mapper.writeValueAsString(organizationEdited);
+
+    when(ucsbOrganizationRepository.findById(eq("TT"))).thenReturn(Optional.of(organizationOg));
+
+    // act
+    MvcResult response =
+        mockMvc
+            .perform(
+                put("/api/ucsborganization?orgCode=TT")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .characterEncoding("utf-8")
+                    .content(requestBody)
+                    .with(csrf()))
+            .andExpect(status().isOk())
+            .andReturn();
+
+    // assert
+    verify(ucsbOrganizationRepository, times(1)).findById("TT");
+    verify(ucsbOrganizationRepository, times(1))
+        .save(organizationEdited); // should be saved with updated info
+    String responseString = response.getResponse().getContentAsString();
+    assertEquals(requestBody, responseString);
+  }
+
+  @WithMockUser(roles = {"ADMIN", "USER"})
+  @Test
+  public void admin_cannot_edit_commons_that_does_not_exist() throws Exception {
+    // arrange
+
+    UCSBOrganization organizationEdited =
+        UCSBOrganization.builder()
+            .orgCode("akpsi")
+            .orgTranslationShort("AK Psi")
+            .orgTranslation("Business Frat")
+            .inactive(false)
+            .build();
+
+    String requestBody = mapper.writeValueAsString(organizationEdited);
+
+    when(ucsbOrganizationRepository.findById(eq("akpsi"))).thenReturn(Optional.empty());
+
+    // act
+    MvcResult response =
+        mockMvc
+            .perform(
+                put("/api/ucsborganization?orgCode=akpsi")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .characterEncoding("utf-8")
+                    .content(requestBody)
+                    .with(csrf()))
             .andExpect(status().isNotFound())
             .andReturn();
 
