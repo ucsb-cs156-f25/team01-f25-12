@@ -2,8 +2,8 @@
     "databaseChangeLog": [
       {
         "changeSet": {
-          "id": "UCSBDates-1",
-          "author": "MattP",
+          "id": "HELPREQUESTS-1",
+          "author": "hrehwald",
           "preConditions": [
             {
               "onFail": "MARK_RAN"
@@ -12,7 +12,7 @@
               "not": [
                 {
                   "tableExists": {
-                    "tableName": "UCSBDATES"
+                    "tableName": "HELPREQUESTS"
                   }
                 }
               ]
@@ -27,7 +27,7 @@
                       "autoIncrement": true,
                       "constraints": {
                         "primaryKey": true,
-                        "primaryKeyName": "UCSBDATES_PK"
+                        "primaryKeyName": "HELPREQUESTS-PK"
                       },
                       "name": "ID",
                       "type": "BIGINT"
@@ -52,7 +52,7 @@
                     }
                   }
                 ],
-                "tableName": "UCSBDATES"
+                "tableName": "HELPREQUESTS"
               }
             }
           ]

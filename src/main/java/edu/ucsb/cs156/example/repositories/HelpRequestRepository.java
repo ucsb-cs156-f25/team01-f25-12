@@ -1,8 +1,8 @@
 package edu.ucsb.cs156.example.repositories;
 
-import edu.ucsb.cs156.example.entities.Job;
+import edu.ucsb.cs156.example.entities.HelpRequest;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface JobsRepository extends CrudRepository<Job, Long> {}
+public interface HelpRequestRepository extends CrudRepository<HelpRequest, Long> {}
