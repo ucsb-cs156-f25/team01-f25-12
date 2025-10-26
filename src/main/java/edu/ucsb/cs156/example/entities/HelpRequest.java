@@ -1,6 +1,5 @@
 package edu.ucsb.cs156.example.entities;
 
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -12,7 +11,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
 /** This is a JPA entity that represents a user. */
 @Data
 @AllArgsConstructor
@@ -23,7 +21,6 @@ public class HelpRequest {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
-
 
   private String requesterEmail;
   private String teamId;
