@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 /** This is a JPA entity that represents a user. */
 @Data
 @AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @Builder
 @Entity(name = "helprequests")
 public class HelpRequest {
