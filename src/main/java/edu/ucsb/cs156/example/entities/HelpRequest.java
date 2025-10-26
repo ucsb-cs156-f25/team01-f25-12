@@ -29,5 +29,3 @@ public class HelpRequest {
   private String explanation;
   private boolean solved;
 }
-
-
