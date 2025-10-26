@@ -28,7 +28,8 @@
                         "primaryKeyName": "UCSBDININGCOMMONSMENUITEM_PK"
                       },
                       "name": "ID",
-                      "type": "BIGINT"
+                      "type": "BIGINT", 
+                      "autoIncrement": true
                     }
                   },
                   {
