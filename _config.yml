@@ -23,4 +23,4 @@ repo_name: "TBD"
 repo: ucsb-cs156-f25/team01-f25-12
 owner: ucsb-cs156-f25
 repo_name: team01-f25-12
-pull_requests: [{"author":{"id":"U_kgDOCqFMyA","is_bot":false,"login":"jaytan3966","name":"Jayden Tan"},"headRefName":"17-add-put-endpoint-for-a-single-record-in-ucsborganization-table","number":48,"title":"created PUT endpoint + test functions for UCSBOrganizations","url":"https://github.com/ucsb-cs156-f25/team01-f25-12/pull/48"}]
+pull_requests: [{"author":{"id":"U_kgDOBaYVeg","is_bot":false,"login":"HRehwald","name":"Hauke Rehwald"},"headRefName":"Hauke-HelpTable2","number":49,"title":"Hauke database setup for HelpRequests","url":"https://github.com/ucsb-cs156-f25/team01-f25-12/pull/49"},{"author":{"id":"U_kgDOCqFMyA","is_bot":false,"login":"jaytan3966","name":"Jayden Tan"},"headRefName":"17-add-put-endpoint-for-a-single-record-in-ucsborganization-table","number":48,"title":"created PUT endpoint + test functions for UCSBOrganizations","url":"https://github.com/ucsb-cs156-f25/team01-f25-12/pull/48"}]
