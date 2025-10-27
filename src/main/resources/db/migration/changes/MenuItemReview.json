@@ -3,7 +3,7 @@
       {
         "changeSet": {
           "id": "MenuItemReview-1",
-          "author": "alvinlovescode",
+          "author": "AlvinC",
           "preConditions": [
             {
               "onFail": "MARK_RAN"
@@ -12,7 +12,7 @@
               "not": [
                 {
                   "tableExists": {
-                    "tableName": "MENU_ITEM_REVIEW"
+                    "tableName": "MENUITEMREVIEW"
                   }
                 }
               ]
@@ -27,7 +27,7 @@
                       "autoIncrement": true,
                       "constraints": {
                         "primaryKey": true,
-                        "primaryKeyName": "MENU_ITEM_REVIEW_PK"
+                        "primaryKeyName": "MENUITEMREVIEW_PK"
                       },
                       "name": "ID",
                       "type": "BIGINT"
@@ -64,7 +64,7 @@
                     }
                   }
                 ],
-                "tableName": "MENU_ITEM_REVIEW"
+                "tableName": "MENUITEMREVIEW"
               }
             }
           ]
