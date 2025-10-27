@@ -47,31 +47,7 @@ public class HelpRequestControllerTests extends ControllerTestCase {
     mockMvc.perform(get("/api/helprequests/all")).andExpect(status().is(200)); // logged
   }
 
-  @WithMockUser(roles = {"USER"})
-  @Test
-  public void user_get_all_returns_data() throws Exception {
-    var h =
-        HelpRequest.builder()
-            .requesterEmail("a@b.com")
-            .teamId("T1")
-            .tableOrBreakoutRoom("Table1")
-            .explanation("x")
-            .solved(false)
-            .requestTime(LocalDateTime.parse("2025-12-23T10:00:00"))
-            .build();
 
-    when(helpRequestRepository.findAll()).thenReturn(List.of(h));
-
-    mockMvc
-        .perform(get("/api/helprequests/all"))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$", hasSize(1)))
-        .andExpect(jsonPath("$[0].requesterEmail", is("a@b.com")))
-        .andExpect(jsonPath("$[0].teamId", is("T1")));
-
-    // Kills VoidMethodCall mutants
-    verify(helpRequestRepository).findAll();
-  }
 
   // Authorization tests for /api/ucsbdates/post
   // (Perhaps should also have these for put and delete)
@@ -89,36 +65,94 @@ public class HelpRequestControllerTests extends ControllerTestCase {
         .andExpect(status().is(403)); // only admins can post
   }
 
-  @WithMockUser(roles = {"ADMIN"})
+
+
+    @WithMockUser(roles = {"USER"})
+    @Test
+    public void logged_in_user_can_get_all_helpRequests() throws Exception {
+
+        // arrange
+        LocalDateTime ldt1 = LocalDateTime.parse("2022-01-03T00:00:00");
+
+
+        HelpRequest helpRequest1 =
+            HelpRequest.builder()
+                .requesterEmail("email")
+                .teamId("team")
+                .tableOrBreakoutRoom("room")
+                .requestTime(LocalDateTime.now())
+                .explanation("help")
+                .solved(false)
+                .build();
+
+        LocalDateTime ldt2 = LocalDateTime.parse("2022-03-11T00:00:00");
+
+        HelpRequest helpRequest2 =
+            HelpRequest.builder()
+                .requesterEmail("email2")
+                .teamId("team2")
+                .tableOrBreakoutRoom("room1")
+                .requestTime(LocalDateTime.now())
+                .explanation("help me too")
+                .solved(false)
+                .build();
+
+        ArrayList<HelpRequest> expectedRequests = new ArrayList<>();
+        expectedRequests.addAll(Arrays.asList(helpRequest1, helpRequest2));
+
+        when(helpRequestRepository.findAll()).thenReturn(expectedRequests);
+
+        // act
+        MvcResult response =
+            mockMvc.perform(get("/api/helprequests/all")).andExpect(status().isOk()).andReturn();
+
+        // assert
+
+        verify(helpRequestRepository, times(1)).findAll();
+        String expectedJson = mapper.writeValueAsString(expectedRequests);
+        String responseString = response.getResponse().getContentAsString();
+        assertEquals(expectedJson, responseString);
+    }
+
+  @WithMockUser(roles = {"ADMIN", "USER"})
   @Test
-  public void admin_can_post_and_entity_is_saved() throws Exception {
-    when(helpRequestRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+  public void an_admin_user_can_post_a_new_helprequest() throws Exception {
+    // arrange
 
-    mockMvc
-        .perform(
-            post("/api/helprequests/post")
-                .param("requesterEmail", "a@b.com")
-                .param("teamId", "T1")
-                .param("tableOrBreakoutRoom", "Table1")
-                .param("explanation", "x")
-                .param("solved", "false")
-                .param("requestTime", "2025-12-23T10:00:00")
-                .with(csrf()))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.requesterEmail", is("a@b.com")))
-        .andExpect(jsonPath("$.teamId", is("T1")))
-        .andExpect(jsonPath("$.solved", is(false)));
+    LocalDateTime ldt1 = LocalDateTime.parse("2022-01-03T00:00:00");
 
-    // Verify fields to kill more mutants
-    verify(helpRequestRepository)
-        .save(
-            argThat(
-                h ->
-                    "a@b.com".equals(h.getRequesterEmail())
-                        && "T1".equals(h.getTeamId())
-                        && "Table1".equals(h.getTableOrBreakoutRoom())
-                        && "x".equals(h.getExplanation())
-                        && !h.getSolved()
-                        && LocalDateTime.parse("2025-12-23T10:00:00").equals(h.getRequestTime())));
-  }
+    HelpRequest helpRequest1 =
+        HelpRequest.builder()
+            .requesterEmail("email")
+            .teamId("team")
+            .tableOrBreakoutRoom("room")
+            .requestTime(LocalDateTime.now())
+            .explanation("help")
+            .solved(false)
+            .build();
+
+    when(helpRequestRepository.save(eq(helpRequest1))).thenReturn(helpRequest1);
+
+    // act
+  MvcResult response =
+      mockMvc
+          .perform(
+              post("/api/helprequests/post")
+                  .param("requesterEmail", "email")
+                  .param("teamId", "team")
+                  .param("tableOrBreakoutRoom", "room")
+                  .param("explanation", "help")
+                  .param("solved", "false")
+                  .param("requestTime", "2025-12-23T00:00:00")
+                  .with(csrf()))
+          .andExpect(status().isOk())
+          .andReturn();
+
+
+    // assert
+    verify(helpRequestRepository, times(1)).save(helpRequest1);
+    String expectedJson = mapper.writeValueAsString(helpRequest1);
+    String responseString = response.getResponse().getContentAsString();
+    assertEquals(expectedJson, responseString);
+  } 
 }
