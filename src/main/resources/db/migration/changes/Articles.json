@@ -60,7 +60,7 @@
                   {
                     "column": {
                       "name": "DATE_ADDED",
-                      "type": "DATE"
+                      "type": "TIMESTAMP"
                     }
                   }
                 ],
