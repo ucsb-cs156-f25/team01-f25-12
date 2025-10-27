@@ -40,7 +40,7 @@ public class MenuItemReviewController extends ApiController {
   }
 
   /**
-   * Create a new menu item review
+   * Creates a new menu item review
    *
    * @param itemId the ID of the menu item being reviewed
    * @param reviewerEmail the email of the reviewer
