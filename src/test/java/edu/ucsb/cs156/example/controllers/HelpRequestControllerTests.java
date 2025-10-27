@@ -144,9 +144,38 @@ public class HelpRequestControllerTests extends ControllerTestCase {
             .andExpect(status().isOk())
             .andReturn();
 
+    HelpRequest helpRequest2 =
+        HelpRequest.builder()
+            .requesterEmail("email")
+            .teamId("team")
+            .tableOrBreakoutRoom("room")
+            .requestTime(ldt1)
+            .explanation("help")
+            .solved(true)
+            .build();
+
+    when(helpRequestRepository.save(eq(helpRequest2))).thenReturn(helpRequest2);
+
+    // act
+    MvcResult response =
+        mockMvc
+            .perform(
+                post("/api/helprequests/post")
+                    .param("requesterEmail", "email")
+                    .param("teamId", "team")
+                    .param("tableOrBreakoutRoom", "room")
+                    .param("explanation", "help")
+                    .param("solved", "true")
+                    .param("requestTime", "2022-01-03T00:00:00")
+                    .with(csrf()))
+            .andExpect(status().isOk())
+            .andReturn();
+
     // assert
     verify(helpRequestRepository, times(1)).save(helpRequest1);
-    String expectedJson = mapper.writeValueAsString(helpRequest1);
+    verify(helpRequestRepository, times(1)).save(helpRequest2);
+
+    String expectedJson = mapper.writeValueAsString(expectedRequests);
     String responseString = response.getResponse().getContentAsString();
     assertEquals(expectedJson, responseString);
   }
