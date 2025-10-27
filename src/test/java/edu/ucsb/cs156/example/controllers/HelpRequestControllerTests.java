@@ -106,7 +106,9 @@ public class HelpRequestControllerTests extends ControllerTestCase {
                 .with(csrf()))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.requesterEmail", is("a@b.com")))
-        .andExpect(jsonPath("$.teamId", is("T1")));
+        .andExpect(jsonPath("$.teamId", is("T1")))
+        .andExpect(jsonPath("$.solved", is(false))); 
+
 
     // Verify fields to kill more mutants
     verify(helpRequestRepository)
