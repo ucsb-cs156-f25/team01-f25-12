@@ -76,7 +76,7 @@ public class HelpRequestControllerTests extends ControllerTestCase {
             .requesterEmail("email")
             .teamId("team")
             .tableOrBreakoutRoom("room")
-            .requestTime(LocalDateTime.now())
+            .requestTime(ldt1)
             .explanation("help")
             .solved(false)
             .build();
@@ -88,7 +88,7 @@ public class HelpRequestControllerTests extends ControllerTestCase {
             .requesterEmail("email2")
             .teamId("team2")
             .tableOrBreakoutRoom("room1")
-            .requestTime(LocalDateTime.now())
+            .requestTime(ldt2)
             .explanation("help me too")
             .solved(false)
             .build();
@@ -122,7 +122,7 @@ public class HelpRequestControllerTests extends ControllerTestCase {
             .requesterEmail("email")
             .teamId("team")
             .tableOrBreakoutRoom("room")
-            .requestTime(LocalDateTime.now())
+            .requestTime(ldt1)
             .explanation("help")
             .solved(false)
             .build();
