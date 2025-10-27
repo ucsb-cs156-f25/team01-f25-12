@@ -159,7 +159,7 @@ public class HelpRequestControllerTests extends ControllerTestCase {
     expectedRequests.addAll(Arrays.asList(helpRequest1, helpRequest2));
 
     // act
-    MvcResult response =
+    MvcResult response2 =
         mockMvc
             .perform(
                 post("/api/helprequests/post")
@@ -177,8 +177,11 @@ public class HelpRequestControllerTests extends ControllerTestCase {
     verify(helpRequestRepository, times(1)).save(helpRequest1);
     verify(helpRequestRepository, times(1)).save(helpRequest2);
 
-    String expectedJson = mapper.writeValueAsString(expectedRequests);
+    String expectedJson = mapper.writeValueAsString(helpRequest1);
     String responseString = response.getResponse().getContentAsString();
     assertEquals(expectedJson, responseString);
+    String expectedJson2 = mapper.writeValueAsString(helpRequest2);
+    String responseString2 = response2.getResponse().getContentAsString();
+    assertEquals(expectedJson2, responseString2);
   }
 }
