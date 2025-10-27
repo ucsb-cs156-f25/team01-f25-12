@@ -155,6 +155,8 @@ public class HelpRequestControllerTests extends ControllerTestCase {
             .build();
 
     when(helpRequestRepository.save(eq(helpRequest2))).thenReturn(helpRequest2);
+    ArrayList<HelpRequest> expectedRequests = new ArrayList<>();
+    expectedRequests.addAll(Arrays.asList(helpRequest1, helpRequest2));
 
     // act
     MvcResult response =
