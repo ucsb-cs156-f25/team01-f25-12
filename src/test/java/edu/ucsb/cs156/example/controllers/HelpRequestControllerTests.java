@@ -139,7 +139,7 @@ public class HelpRequestControllerTests extends ControllerTestCase {
                     .param("tableOrBreakoutRoom", "room")
                     .param("explanation", "help")
                     .param("solved", "false")
-                    .param("requestTime", "2025-12-23T00:00:00")
+                    .param("requestTime", "2022-01-03T00:00:00")
                     .with(csrf()))
             .andExpect(status().isOk())
             .andReturn();
