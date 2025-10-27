@@ -12,6 +12,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.mockito.ArgumentMatchers.argThat;
+
 
 import edu.ucsb.cs156.example.ControllerTestCase;
 import edu.ucsb.cs156.example.entities.HelpRequest;
@@ -126,7 +128,5 @@ public class HelpRequestControllerTests extends ControllerTestCase {
             !h.isSolved() &&
             LocalDateTime.parse("2025-12-23T10:00:00").equals(h.getRequestTime())
         ));
-    }
-
-            
+    }            
 }
