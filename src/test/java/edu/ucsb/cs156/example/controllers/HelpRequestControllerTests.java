@@ -125,7 +125,7 @@ public class HelpRequestControllerTests extends ControllerTestCase {
             "T1".equals(h.getTeamId()) &&
             "Table1".equals(h.getTableOrBreakoutRoom()) &&
             "x".equals(h.getExplanation()) &&
-            !h.isSolved() &&
+            !h.getSolved() &&
             LocalDateTime.parse("2025-12-23T10:00:00").equals(h.getRequestTime())
         ));
     }            
