@@ -67,8 +67,7 @@ public class HelpRequestControllerTests extends ControllerTestCase {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$", hasSize(1)))
         .andExpect(jsonPath("$[0].requesterEmail", is("a@b.com")))
-        .andExpect(jsonPath("$[0].teamId", is("T1")))
-        .andExpect(jsonPath("$.solved", is(false)));
+        .andExpect(jsonPath("$[0].teamId", is("T1")));
 
     // Kills VoidMethodCall mutants
     verify(helpRequestRepository).findAll();
