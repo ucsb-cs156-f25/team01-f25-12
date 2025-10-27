@@ -1,7 +1,8 @@
 package edu.ucsb.cs156.example.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -136,8 +137,11 @@ public class RecommendationRequestsControllerTests extends ControllerTestCase {
             .done(false)
             .build();
 
-    when(recommendationRequestRepository.save(eq(recommendationRequest1)))
-        .thenReturn(recommendationRequest1);
+    // when(recommendationRequestRepository.save(eq(recommendationRequest1)))
+    //     .thenReturn(recommendationRequest1);
+
+    when(recommendationRequestRepository.save(any(RecommendationRequest.class)))
+        .thenAnswer(invocation -> invocation.getArgument(0));
 
     // act
     MvcResult response =
@@ -149,8 +153,80 @@ public class RecommendationRequestsControllerTests extends ControllerTestCase {
             .andReturn();
 
     // assert
-    verify(recommendationRequestRepository, times(1)).save(eq(recommendationRequest1));
-    String expectedJson = mapper.writeValueAsString(recommendationRequest1);
+    verify(recommendationRequestRepository, times(1))
+        .save(
+            argThat(
+                (RecommendationRequest r) ->
+                    r.getRequesterEmail().equals("ja@ucsb.edu")
+                        && r.getProfessorEmail().equals("pconrad@ucsb.edu")
+                        && r.getExplanation().equals("recommendation")
+                        && r.getDateRequested().equals(ldt1)
+                        && r.getDateNeeded().equals(ldt2)
+                        && r.getDone() == false));
+
+    RecommendationRequest expected =
+        RecommendationRequest.builder()
+            .requesterEmail("ja@ucsb.edu")
+            .professorEmail("pconrad@ucsb.edu")
+            .explanation("recommendation")
+            .dateRequested(ldt1)
+            .dateNeeded(ldt2)
+            .done(false)
+            .build();
+
+    String expectedJson = mapper.writeValueAsString(expected);
+    String responseString = response.getResponse().getContentAsString();
+    assertEquals(expectedJson, responseString);
+  }
+
+  @WithMockUser(roles = {"ADMIN", "USER"})
+  @Test
+  public void an_admin_user_can_post_a_recommendation_request_with_done_true() throws Exception {
+    // arrange
+    LocalDateTime ldt1 = LocalDateTime.parse("2023-03-10T00:00:00");
+    LocalDateTime ldt2 = LocalDateTime.parse("2023-04-10T00:00:00");
+
+    when(recommendationRequestRepository.save(any(RecommendationRequest.class)))
+        .thenAnswer(invocation -> invocation.getArgument(0));
+
+    // act
+    MvcResult response =
+        mockMvc
+            .perform(
+                post("/api/recommendationrequests/post"
+                        + "?requesterEmail=test@ucsb.edu"
+                        + "&professorEmail=prof@ucsb.edu"
+                        + "&explanation=testDoneTrue"
+                        + "&dateRequested=2023-03-10T00:00:00"
+                        + "&dateNeeded=2023-04-10T00:00:00"
+                        + "&done=true")
+                    .with(csrf()))
+            .andExpect(status().isOk())
+            .andReturn();
+
+    // assert
+    verify(recommendationRequestRepository, times(1))
+        .save(
+            argThat(
+                (RecommendationRequest r) ->
+                    r.getRequesterEmail().equals("test@ucsb.edu")
+                        && r.getProfessorEmail().equals("prof@ucsb.edu")
+                        && r.getExplanation().equals("testDoneTrue")
+                        && r.getDateRequested().equals(ldt1)
+                        && r.getDateNeeded().equals(ldt2)
+                        && r.getDone() == true));
+
+    RecommendationRequest expected =
+        RecommendationRequest.builder()
+            .requesterEmail("test@ucsb.edu")
+            .professorEmail("prof@ucsb.edu")
+            .explanation("testDoneTrue")
+            .dateRequested(ldt1)
+            .dateNeeded(ldt2)
+            .done(true)
+            .build();
+
+    String expectedJson = mapper.writeValueAsString(expected);
     String responseString = response.getResponse().getContentAsString();
     assertEquals(expectedJson, responseString);
   }
