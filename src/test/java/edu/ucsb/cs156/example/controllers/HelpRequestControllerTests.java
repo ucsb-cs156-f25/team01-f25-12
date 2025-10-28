@@ -349,6 +349,6 @@ public class HelpRequestControllerTests extends ControllerTestCase {
     // assert
     verify(helpRequestRepository, times(1)).findById(67L);
     Map<String, Object> json = responseToJson(response);
-    assertEquals("Helprequest with id 67 not found", json.get("message"));
+    assertEquals("HelpRequest with id 67 not found", json.get("message"));
   }
 }
