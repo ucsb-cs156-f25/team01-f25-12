@@ -312,4 +312,43 @@ public class HelpRequestControllerTests extends ControllerTestCase {
         .perform(post("/api/helprequests/put"))
         .andExpect(status().is(403)); // only admins can post
   }
+
+  @WithMockUser(roles = {"ADMIN", "USER"})
+  @Test
+  public void admin_cannot_edit_helprequest_that_does_not_exist() throws Exception {
+    // arrange
+
+    LocalDateTime ldt1 = LocalDateTime.parse("2022-01-03T00:00:00");
+
+    HelpRequest helpRequest =
+        HelpRequest.builder()
+            .requesterEmail("email")
+            .teamId("team")
+            .tableOrBreakoutRoom("room")
+            .requestTime(ldt1)
+            .explanation("help")
+            .solved(true)
+            .build();
+
+    String requestBody = mapper.writeValueAsString(helpRequest);
+
+    when(helpRequestRepository.findById(eq(67L))).thenReturn(Optional.empty());
+
+    // act
+    MvcResult response =
+        mockMvc
+            .perform(
+                put("/api/helprequests?id=67")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .characterEncoding("utf-8")
+                    .content(requestBody)
+                    .with(csrf()))
+            .andExpect(status().isNotFound())
+            .andReturn();
+
+    // assert
+    verify(helpRequestRepository, times(1)).findById(67L);
+    Map<String, Object> json = responseToJson(response);
+    assertEquals("Helprequest with id 67 not found", json.get("message"));
+  }
 }
