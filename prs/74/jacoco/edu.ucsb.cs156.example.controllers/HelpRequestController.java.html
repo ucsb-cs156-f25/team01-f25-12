@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -20,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.DeleteMapping;
 
 /** This is a REST controller for HelpRequest */
 @Tag(name = &quot;HelpRequests&quot;)
@@ -128,7 +128,8 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 <span class="fc" id="L128">    helpRequestRepository.save(incoming);</span>
 <span class="fc" id="L129">    return incoming;</span>
   }
-   /**
+
+  /**
    * Delete a HelpRequest
    *
    * @param id the id of the helpRequest to delete
@@ -138,13 +139,13 @@ import org.springframework.web.bind.annotation.DeleteMapping;
   @PreAuthorize(&quot;hasRole('ROLE_ADMIN')&quot;)
   @DeleteMapping(&quot;&quot;)
   public Object deleteHelpRequest(@Parameter(name = &quot;id&quot;) @RequestParam Long id) {
-<span class="fc" id="L141">    HelpRequest helpRequest =</span>
+<span class="fc" id="L142">    HelpRequest helpRequest =</span>
         helpRequestRepository
-<span class="fc" id="L143">            .findById(id)</span>
-<span class="fc" id="L144">            .orElseThrow(() -&gt; new EntityNotFoundException(HelpRequest.class, id));</span>
+<span class="fc" id="L144">            .findById(id)</span>
+<span class="fc" id="L145">            .orElseThrow(() -&gt; new EntityNotFoundException(HelpRequest.class, id));</span>
 
-<span class="fc" id="L146">    helpRequestRepository.delete(helpRequest);</span>
-<span class="fc" id="L147">    return genericMessage(&quot;HelpRequest with id %s deleted&quot;.formatted(id));</span>
+<span class="fc" id="L147">    helpRequestRepository.delete(helpRequest);</span>
+<span class="fc" id="L148">    return genericMessage(&quot;HelpRequest with id %s deleted&quot;.formatted(id));</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
