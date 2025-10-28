@@ -205,8 +205,8 @@ public class UCSBDiningCommonsMenuItemControllerTests extends ControllerTestCase
 
     UCSBDiningCommonsMenuItem macEdited =
         UCSBDiningCommonsMenuItem.builder()
-            .diningCommonsCode("ortega")
-            .name("mac")
+            .diningCommonsCode("portola")
+            .name("chili")
             .station("Special")
             .build();
 
