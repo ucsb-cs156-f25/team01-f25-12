@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.DeleteMapping;
 
 /** This is a REST controller for HelpRequest */
 @Tag(name = "HelpRequests")
@@ -126,5 +127,23 @@ public class HelpRequestController extends ApiController {
 
     helpRequestRepository.save(incoming);
     return incoming;
+  }
+   /**
+   * Delete a HelpRequest
+   *
+   * @param id the id of the helpRequest to delete
+   * @return a message indicating the helpRequest was deleted
+   */
+  @Operation(summary = "Delete a helpRequest")
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
+  @DeleteMapping("")
+  public Object deleteHelpRequest(@Parameter(name = "id") @RequestParam Long id) {
+    HelpRequest helpRequest =
+        helpRequestRepository
+            .findById(id)
+            .orElseThrow(() -> new EntityNotFoundException(HelpRequest.class, id));
+
+    helpRequestRepository.delete(helpRequest);
+    return genericMessage("HelpRequest with id %s deleted".formatted(id));
   }
 }
