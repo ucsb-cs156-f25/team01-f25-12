@@ -354,6 +354,8 @@ public class HelpRequestControllerTests extends ControllerTestCase {
     assertEquals("HelpRequest with id 67 not found", json.get("message"));
   }
 
+  // Delete Tests
+
   @WithMockUser(roles = {"ADMIN", "USER"})
   @Test
   public void admin_can_delete_a_helprequest() throws Exception {
@@ -407,5 +409,18 @@ public class HelpRequestControllerTests extends ControllerTestCase {
     verify(helpRequestRepository, times(1)).findById(15L);
     Map<String, Object> json = responseToJson(response);
     assertEquals("HelpRequest with id 15 not found", json.get("message"));
+  }
+
+  @Test
+  public void logged_out_users_cannot_delete() throws Exception {
+    mockMvc.perform(post("/api/helprequests/delete")).andExpect(status().is(403));
+  }
+
+  @WithMockUser(roles = {"USER"})
+  @Test
+  public void logged_in_regular_users_cannot_delete() throws Exception {
+    mockMvc
+        .perform(post("/api/helprequests/delete"))
+        .andExpect(status().is(403)); // only admins can delete
   }
 }
