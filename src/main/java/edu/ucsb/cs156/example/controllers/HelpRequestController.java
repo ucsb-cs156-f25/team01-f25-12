@@ -116,24 +116,15 @@ public class HelpRequestController extends ApiController {
    */
   @Operation(summary = "Update a single helprequest")
   @PreAuthorize("hasRole('ROLE_ADMIN')")
-  @PutMapping("")
+  @PutMapping
   public HelpRequest updateHelpRequest(
       @Parameter(name = "id") @RequestParam Long id, @RequestBody @Valid HelpRequest incoming) {
 
-    HelpRequest helpRequest =
-        helpRequestRepository
-            .findById(id)
-            .orElseThrow(() -> new EntityNotFoundException(HelpRequest.class, id));
+    if (helpRequestRepository.findById(id).isEmpty()) {
+      throw new EntityNotFoundException(HelpRequest.class, id);
+    }
 
-    helpRequest.setRequesterEmail(incoming.getRequesterEmail());
-    helpRequest.setTeamId(incoming.getTeamId());
-    helpRequest.setTableOrBreakoutRoom(incoming.getTableOrBreakoutRoom());
-    helpRequest.setRequestTime(incoming.getRequestTime());
-    helpRequest.setExplanation(incoming.getExplanation());
-    helpRequest.setSolved(incoming.getSolved());
-
-    helpRequestRepository.save(helpRequest);
-
-    return helpRequest;
+    helpRequestRepository.save(incoming);
+    return incoming;
   }
 }
