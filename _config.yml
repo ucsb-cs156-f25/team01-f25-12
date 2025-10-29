@@ -23,4 +23,4 @@ repo_name: "TBD"
 repo: ucsb-cs156-f25/team01-f25-12
 owner: ucsb-cs156-f25
 repo_name: team01-f25-12
-pull_requests: [{"author":{"id":"U_kgDOC6IUpQ","is_bot":false,"login":"joshua-dev-codes","name":""},"headRefName":"ja-create-recommendation-request-controller","number":64,"title":"Ja create recommendation request controller adding get all and post methods","url":"https://github.com/ucsb-cs156-f25/team01-f25-12/pull/64"}]
+pull_requests: []
