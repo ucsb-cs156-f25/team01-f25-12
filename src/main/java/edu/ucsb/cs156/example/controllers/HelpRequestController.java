@@ -7,6 +7,7 @@ import edu.ucsb.cs156.example.repositories.HelpRequestRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.time.LocalDateTime;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -102,5 +105,26 @@ public class HelpRequestController extends ApiController {
     HelpRequest savedHelpRequest = helpRequestRepository.save(helpRequest);
 
     return savedHelpRequest;
+  }
+
+  /**
+   * Update a single helprequest
+   *
+   * @param id id of the helprequest to update
+   * @param incoming the new helprequest data
+   * @return the updated helprequest object
+   */
+  @Operation(summary = "Update a single helprequest")
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
+  @PutMapping
+  public HelpRequest updateHelpRequest(
+      @Parameter(name = "id") @RequestParam Long id, @RequestBody @Valid HelpRequest incoming) {
+
+    if (helpRequestRepository.findById(id).isEmpty()) {
+      throw new EntityNotFoundException(HelpRequest.class, id);
+    }
+
+    helpRequestRepository.save(incoming);
+    return incoming;
   }
 }
