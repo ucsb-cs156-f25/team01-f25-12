@@ -2,10 +2,12 @@ package edu.ucsb.cs156.example.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import edu.ucsb.cs156.example.entities.RecommendationRequest;
+import edu.ucsb.cs156.example.errors.EntityNotFoundException;
 import edu.ucsb.cs156.example.repositories.RecommendationRequestRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.time.LocalDateTime;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -94,5 +98,54 @@ public class RecommendationRequestsController extends ApiController {
         recommendationRequestRepository.save(recommendationRequest);
 
     return savedRecommendationRequest;
+  }
+
+  /**
+   * Get a single recommendation request by id
+   *
+   * @param id the id of the recommendation request
+   * @return a RecommendationRequest
+   */
+  @Operation(summary = "Get a single recommendation request")
+  @PreAuthorize("hasRole('ROLE_USER')")
+  @GetMapping("")
+  public RecommendationRequest getById(@Parameter(name = "id") @RequestParam Long id) {
+    RecommendationRequest recommendationRequest =
+        recommendationRequestRepository
+            .findById(id)
+            .orElseThrow(() -> new EntityNotFoundException(RecommendationRequest.class, id));
+
+    return recommendationRequest;
+  }
+
+  /**
+   * Update a single request
+   *
+   * @param id id of the request to update
+   * @param incoming the new request
+   * @return the updated request object
+   */
+  @Operation(summary = "Update a single request")
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
+  @PutMapping("")
+  public RecommendationRequest updateRecommendationRequest(
+      @Parameter(name = "id") @RequestParam Long id,
+      @RequestBody @Valid RecommendationRequest incoming) {
+
+    RecommendationRequest recommendationRequest =
+        recommendationRequestRepository
+            .findById(id)
+            .orElseThrow(() -> new EntityNotFoundException(RecommendationRequest.class, id));
+
+    recommendationRequest.setRequesterEmail(incoming.getRequesterEmail());
+    recommendationRequest.setProfessorEmail(incoming.getProfessorEmail());
+    recommendationRequest.setExplanation(incoming.getExplanation());
+    recommendationRequest.setDateRequested(incoming.getDateRequested());
+    recommendationRequest.setDateNeeded(incoming.getDateNeeded());
+    recommendationRequest.setDone(incoming.getDone());
+
+    recommendationRequestRepository.save(recommendationRequest);
+
+    return recommendationRequest;
   }
 }
