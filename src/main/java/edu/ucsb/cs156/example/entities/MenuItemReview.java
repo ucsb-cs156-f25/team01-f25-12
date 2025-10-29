@@ -21,7 +21,7 @@ public class MenuItemReview {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
 
-  private long itemid;
+  private long itemId; // matches database column ITEM_ID
   private String reviewerEmail;
   private int stars;
   private LocalDateTime dateReviewed;
