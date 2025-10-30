@@ -33,7 +33,7 @@ import org.springframework.test.web.servlet.MvcResult;
 
 @WebMvcTest(controllers = UCSBOrganizationController.class)
 @Import(TestConfig.class)
-public class UCSBOrganizationTests extends ControllerTestCase {
+public class UCSBOrganizationControllerTests extends ControllerTestCase {
 
   @MockBean UCSBOrganizationRepository ucsbOrganizationRepository;
 
